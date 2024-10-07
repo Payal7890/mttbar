@@ -79,19 +79,34 @@ def electron_selection(
 
     # veto events if additional leptons present
     # (note the looser cuts)
-    add_leptons = (
+    add_leptons_lowpt = (
         (abs(lepton.eta + lepton.deltaEtaSC) < 2.5) &
-        (lepton.pt > 25) &
-        # cut-based electron ID (3: tight working point)
-        (lepton.cutBased == 3) &
-        ~lepton_mask
+        (lepton.pt > 15) &
+        # cut-based electron ID (4: tight working point)
+        (lepton.cutBased == 4) &
+        ~lepton_mask_lowpt
     )
-    dilepton_veto = (ak.sum(add_leptons, axis=-1) < 2)
+
+    add_leptons_highpt = (
+        (abs(lepton.eta + lepton.deltaEtaSC) < 2.5) &
+        (lepton.pt > 15) &
+        # cut-based electron ID (4: tight working point)
+        (lepton.cutBased == 4) &
+        ~lepton_mask_highpt
+    )
+
+    add_leptons = (add_leptons_lowpt | add_leptons_highpt)
+
+
+    dilepton_veto = (ak.sum(add_leptons, axis=-1) == 0)
+    veto_lepton_indices = masked_sorted_indices(add_leptons, lepton.pt)
 
     # lepton multiplicity
     n_lep = ak.sum(lepton_mask, axis=-1)
     n_lep_lowpt = ak.sum(lepton_mask_lowpt, axis=-1)
     n_lep_highpt = ak.sum(lepton_mask_highpt, axis=-1)
+
+    
 
     # mark pt regime of events (0: undefined, 1: low-pt, 2: high-pt)
     pt_regime = ak.zeros_like(events.event, dtype=np.int8)
@@ -102,12 +117,16 @@ def electron_selection(
 
     return SelectionResult(
         steps={
+           
             "Lepton": (ak.num(lepton_indices) == 1),
-            "DileptonVeto": dilepton_veto,
+           
+
+           
         },
         objects={
             "Electron": {
                 "Electron": lepton_indices,
+                "VetoElectron": veto_lepton_indices,
             },
         },
         aux={
@@ -120,7 +139,7 @@ def electron_selection(
     uses={
         "event",
         check_early,
-        "Muon.pt", "Muon.eta", "Muon.tightId", "Muon.highPtId", "Muon.pfIsoId",
+        "Muon.pt", "Muon.eta", "Muon.tightId", "Muon.highPtId", "Muon.pfIsoId", "Muon.looseId",
     },
 )
 def muon_selection(
@@ -152,7 +171,7 @@ def muon_selection(
         (lepton.pt > 30) &
         (lepton.pt <= 55) &
         # 4 == PFIsoTight
-        (lepton.pfIsoId == 4) &
+        (lepton.pfIsoId >= 4) & (lepton.pfIsoId <= 6)  &
         # CutBasedIdTight
         (lepton.tightId)
     )
@@ -169,19 +188,37 @@ def muon_selection(
 
     # veto events if additional leptons present
     # (note the looser cuts)
-    add_leptons = (
-        (abs(lepton.eta) < 2.4) &
-        (lepton.pt > 25) &
-        # CutBasedIdTight
-        (lepton.tightId) &
-        ~lepton_mask
+    add_leptons_lowpt = (
+        (abs(lepton.eta) < 2.4) & 
+        (lepton.pt > 15) & 
+         
+        (lepton.looseId)  &
+       
+        ~lepton_mask_lowpt
     )
-    dilepton_veto = (ak.sum(add_leptons, axis=-1) < 2)
+    add_leptons_highpt = (
+        (abs(lepton.eta) < 2.4) & 
+        (lepton.pt > 15) & 
+         
+        (lepton.looseId)  &
+       
+        ~lepton_mask_highpt
+    )
+
+    add_leptons = add_leptons_lowpt | add_leptons_highpt
+    
+    
+
+    dilepton_veto = (ak.sum(add_leptons, axis=-1) == 0)
+    veto_lepton_indices = masked_sorted_indices(add_leptons, lepton.pt)
+
 
     # lepton multiplicity
     n_lep = ak.sum(lepton_mask, axis=-1)
     n_lep_lowpt = ak.sum(lepton_mask_lowpt, axis=-1)
     n_lep_highpt = ak.sum(lepton_mask_highpt, axis=-1)
+
+    
 
     # mark pt regime of events (0: undefined, 1: low-pt, 2: high-pt)
     pt_regime = ak.zeros_like(events.event, dtype=np.int8)
@@ -192,12 +229,16 @@ def muon_selection(
 
     return SelectionResult(
         steps={
-            "Lepton": (ak.num(lepton_indices) == 1),
-            "DileptonVeto": dilepton_veto,
+           "Lepton": (ak.num(lepton_indices) == 1),
+          
+          
+            
         },
         objects={
             "Muon": {
                 "Muon": lepton_indices,
+                "VetoMuon": veto_lepton_indices,
+
             },
         },
         aux={
@@ -401,6 +442,7 @@ def lepton_selection(
             add_channel_index[add_channel_index != -1],
         ], axis=-1)
 
+       
         # add the trigger result as a selection step
         results.steps["LeptonTrigger"] = pass_trigger
 
@@ -426,19 +468,8 @@ def lepton_selection(
         )
         for var, vals in merged_aux.items()
     }
-
-    # veto events with both electrons and muons
-    # passing the selection cuts
-    merged_steps["DileptonVeto"] = (
-        merged_steps["DileptonVeto"] &
-        (
-            (
-                ak.num(merged_objects["Muon"]["Muon"], axis=-1) +
-                ak.num(merged_objects["Electron"]["Electron"], axis=-1)
-            ) <= 1
-        )
-    )
-
+   
+    
     # invalidate channel if both e and mu were found
     channel_id = ak.where(
         ak.num(channel_ids, axis=-1) == 1,

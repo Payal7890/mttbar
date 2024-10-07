@@ -8,7 +8,7 @@
 # common arguments for all tasks
 args=(
     --version v3
-    --categories 1e,1e__0t,1e__1t,1e__0t__chi2pass,1e__1t__chi2pass
+    --categories 1e,1e__0t,1e__1t,1e__0t__pass,1e__1t__chi2pass
     --hide-errors
     --skip-ratio
     --workers 8

@@ -72,52 +72,11 @@ def add_categories_selection(config: od.Config) -> None:
         label="inclusive",
     )
 
-    # top category for electron channel
-    config.add_category(
-        name="1e",
-        id=1,
-        selection="sel_1e",
-        label="1e",
-        #channel=config.get_channel("e"),  # noqa
-    )
+    
 
-    # top category for muon channel
-    config.add_category(
-        name="1m",
-        id=2,
-        selection="sel_1m",
-        label=r"1$\mu$",
-        #channel=config.get_channel("mu"),  # noqa
-    )
+    
 
-    # number of top tags
-    config.add_category(
-        name="0t",
-        id=10,
-        selection="sel_0t",
-        label=r"0t",
-    )
-    config.add_category(
-        name="1t",
-        id=20,
-        selection="sel_1t",
-        label=r"1t",
-    )
-
-    # -- combined categories
-
-    category_groups = {
-        "lepton": [
-            config.get_category(name)
-            for name in ["1e", "1m"]
-        ],
-        "n_top_tags": [
-            config.get_category(name)
-            for name in ["0t", "1t"]
-        ],
-    }
-
-    create_category_combinations(config, category_groups, name_fn, kwargs_fn)
+   
 
 
 def add_categories_production(config: od.Config) -> None:
@@ -172,14 +131,7 @@ def add_categories_production(config: od.Config) -> None:
     # -- combined categories
 
     category_groups = {
-        "lepton": [
-            config.get_category(name)
-            for name in ["1e", "1m"]
-        ],
-        "n_top_tags": [
-            config.get_category(name)
-            for name in ["0t", "1t"]
-        ],
+       
         "chi2": [
             config.get_category(name)
             for name in ["chi2pass", "chi2fail"]
@@ -218,22 +170,13 @@ def add_categories_ml(config: od.Config, ml_model_inst: MLModel) -> None:
     # -- combined categories
 
     category_groups = {
-        "lepton": [
-            config.get_category(name)
-            for name in ["1e", "1m"]
-        ],
-        "n_top_tags": [
-            config.get_category(name)
-            for name in ["0t", "1t"]
-        ],
+       
+       
         "chi2": [
             config.get_category(name)
             for name in ["chi2pass", "chi2fail"]
         ],
-        "cos_theta_star": [
-            config.get_category(name)
-            for name in ["acts_0_5", "acts_5_7", "acts_7_9", "acts_9_1"]
-        ],
+      
         "dnn": dnn_categories,
     }
 

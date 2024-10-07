@@ -127,6 +127,10 @@ def default(
         n_sel = ak.sum(sel, axis=-1)
         print(f"{step}: {n_sel}")
 
+    n_vetoed = ak.sum(~results.steps["DileptonVeto"], axis=-1)
+    print(f"Vetoed events: {n_vetoed}")
+    
+
     n_sel = ak.sum(event_sel, axis=-1)
     print(f"__all__: {n_sel}")
 

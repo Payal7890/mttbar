@@ -85,7 +85,7 @@ def add_variables(config: od.Config) -> None:
             )
 
     # Leptons
-    for obj in ["Electron", "Muon"]:
+    for obj in ["Electron", "Muon", "VetoElectron", "VetoMuon"]:
         config.add_variable(
             name=f"{obj.lower()}_pt",
             expression=f"{obj}.pt[:,0]",

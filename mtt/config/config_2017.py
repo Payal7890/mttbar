@@ -114,32 +114,32 @@ dataset_names = [
     "tt_dl_powheg",
     "tt_fh_powheg",
     # WJets
-    "w_lnu_ht70to100_madgraph",
-    "w_lnu_ht100to200_madgraph",
-    "w_lnu_ht200to400_madgraph",
-    "w_lnu_ht400to600_madgraph",
-    "w_lnu_ht600to800_madgraph",
-    "w_lnu_ht800to1200_madgraph",
-    "w_lnu_ht1200to2500_madgraph",
-    "w_lnu_ht2500toinf_madgraph",
+    "w_lnu_ht70To100_madgraph",
+    "w_lnu_ht100To200_madgraph",
+    "w_lnu_ht200To400_madgraph",
+    "w_lnu_ht400To600_madgraph",
+    "w_lnu_ht600To800_madgraph",
+    "w_lnu_ht800To1200_madgraph",
+    "w_lnu_ht1200To2500_madgraph",
+    "w_lnu_ht2500_madgraph",
     # DY
-    "dy_m50toinf_ht70to100_madgraph",
-    "dy_m50toinf_ht100to200_madgraph",
-    "dy_m50toinf_ht200to400_madgraph",
-    "dy_m50toinf_ht400to600_madgraph",
-    "dy_m50toinf_ht600to800_madgraph",
-    "dy_m50toinf_ht800to1200_madgraph",
-    "dy_m50toinf_ht1200to2500_madgraph",
-    "dy_m50toinf_ht2500toinf_madgraph",
+    "dy_lep_m50_ht70to100_madgraph",
+    "dy_lep_m50_ht100to200_madgraph",
+    "dy_lep_m50_ht200to400_madgraph",
+    "dy_lep_m50_ht400to600_madgraph",
+    "dy_lep_m50_ht600to800_madgraph",
+    "dy_lep_m50_ht800to1200_madgraph",
+    "dy_lep_m50_ht1200to2500_madgraph",
+    "dy_lep_m50_ht2500_madgraph",
     # Diboson
     "ww_pythia",
     "wz_pythia",
     "zz_pythia",
     # SingleTop
-    "st_schannel_lep_4f_amcatnlo",
-    "st_schannel_had_4f_amcatnlo",
-    "st_tchannel_t_4f_powheg",
-    "st_tchannel_tbar_4f_powheg",
+    "st_schannel_lep_amcatnlo",
+    "st_schannel_had_amcatnlo",
+    "st_tchannel_t_powheg",
+    "st_tchannel_tbar_powheg",
     "st_twchannel_t_powheg",
     "st_twchannel_tbar_powheg",
     # QCD
@@ -151,7 +151,7 @@ dataset_names = [
     "qcd_ht700to1000_madgraph",
     "qcd_ht1000to1500_madgraph",
     "qcd_ht1500to2000_madgraph",
-    "qcd_ht2000toinf_madgraph",
+    "qcd_ht2000_madgraph",
     # -- signals
     # Z prime (width/mass = 10%)
     "zprime_tt_m400_w40_madgraph",
@@ -965,10 +965,10 @@ config_2017.x.external_files = DotDict.wrap({
     "muon_sf": (f"{sources['json_mirror']}/POG/MUO/2017_UL/muon_Z.json.gz", "v1"),  # noqa
 
     # L1 prefiring corrections
-    "l1_prefiring": f"{os.getenv('MTT_ORIG_BASE')}/data/json/l1_prefiring.json",
+   "l1_prefiring": "/nfs/dust/cms/user/payalroy/mttbar/data/json/l1_prefiring.json",
 
     # V+jets reweighting
-    "vjets_reweighting": f"{os.getenv('MTT_ORIG_BASE')}/data/json/vjets_reweighting.json",
+   "vjets_reweighting":"/nfs/dust/cms/user/payalroy/mttbar/data/json/vjets_reweighting.json",
 
     # lumi files
     "lumi": {
@@ -1011,11 +1011,11 @@ config_2017.x.keep_columns = DotDict.wrap({
 
         # muons
         "Muon.pt", "Muon.eta", "Muon.phi", "Muon.mass",
-        "Muon.pfRelIso04_all",
+        "Muon.pfRelIso04_all", "VetoMuon.pt",
         # electrons
         "Electron.pt", "Electron.eta", "Electron.phi", "Electron.mass",
         "Electron.deltaEtaSC",
-        "Electron.pfRelIso03_all",
+        "Electron.pfRelIso03_all", "VetoElectron.pt",
 
         # photons (for L1 prefiring)
         "Photon.pt", "Photon.eta", "Photon.phi", "Photon.mass",
@@ -1218,5 +1218,5 @@ add_variables(config_2017)
 config_2017_limited = config_2017.copy(name=f"{config_2017.name}_limited", id="+")
 for dataset in config_2017_limited.datasets:
     for k in dataset.info.keys():
-        if dataset[k].n_files > 10:
-            dataset[k].n_files = 10
+        if dataset[k].n_files > 1:
+            dataset[k].n_files = 1
