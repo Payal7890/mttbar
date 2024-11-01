@@ -49,11 +49,11 @@ def jj_features(self: Producer, events: ak.Array, **kwargs) -> ak.Array:
 
     # calculate and save invariant mass
     dijet_mass = (jets[:, 0] + jets[:, 1]).mass
-    events = set_ak_column(events, "dijet_mass", dijet_mass)
+    events = set_ak_column(events, "dijet_mass", ak.fill_none(dijet_mass,EMPTY_FLOAT))
 
     # calculate and save delta-R
     dijet_delta_r = jets[:, 0].delta_r(jets[:, 1])
-    events = set_ak_column(events, "dijet_delta_r", dijet_delta_r)
+    events = set_ak_column(events, "dijet_delta_r", ak.fill_none(dijet_delta_r,EMPTY_FLOAT))
 
     return events
 

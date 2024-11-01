@@ -26,3 +26,4 @@ args=(
 
 law run cf.PlotVariables1D \
     "${args[@]}"
+

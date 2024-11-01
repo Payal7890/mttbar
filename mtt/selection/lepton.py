@@ -81,12 +81,12 @@ def electron_selection(
     # (note the looser cuts)
     add_leptons = (
         (abs(lepton.eta + lepton.deltaEtaSC) < 2.5) &
-        (lepton.pt > 25) &
+        (lepton.pt > 15) &
         # cut-based electron ID (3: tight working point)
-        (lepton.cutBased == 3) &
+        (lepton.cutBased == 4) &
         ~lepton_mask
     )
-    dilepton_veto = (ak.sum(add_leptons, axis=-1) < 2)
+    dilepton_veto = (ak.sum(add_leptons, axis=-1) == 0)
 
     # lepton multiplicity
     n_lep = ak.sum(lepton_mask, axis=-1)
@@ -152,7 +152,7 @@ def muon_selection(
         (lepton.pt > 30) &
         (lepton.pt <= 55) &
         # 4 == PFIsoTight
-        (lepton.pfIsoId == 4) &
+        (lepton.pfIsoId >= 4) & (lepton.pfIsoId <= 6) &
         # CutBasedIdTight
         (lepton.tightId)
     )
@@ -171,12 +171,12 @@ def muon_selection(
     # (note the looser cuts)
     add_leptons = (
         (abs(lepton.eta) < 2.4) &
-        (lepton.pt > 25) &
+        (lepton.pt > 15) &
         # CutBasedIdTight
         (lepton.tightId) &
         ~lepton_mask
     )
-    dilepton_veto = (ak.sum(add_leptons, axis=-1) < 2)
+    dilepton_veto = (ak.sum(add_leptons, axis=-1) == 0)
 
     # lepton multiplicity
     n_lep = ak.sum(lepton_mask, axis=-1)
